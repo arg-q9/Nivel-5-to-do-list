@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>DOM como un pro</title>
+    <style>
+        body{
+            background-color: aliceblue;
+        }
+       h1{
+        color: black;
+       }
+       h2{
+        color: black;
+       }
+       ul{
+        color: black;
+       }
+       li{
+        color: rgb(0, 0, 0);
+       }
+       p{
+        color: rgb(5, 5, 5);
+       }
+
+       .oscuro{
+        background-color: black;
+       }
+       .oscuro h1{
+        color: rgb(207, 38, 137);
+       }
+       .oscuro ul{
+        color: rgb(0, 0, 0);
+       }
+       .oscuro li{
+        color: rgb(0, 0, 0);
+        
+       }
+       .oscuro h2{
+        color: aliceblue;
+       }
+       .oscuro p{
+        color: rgb(207, 29, 29);
+       }
+       
+
+       .completado{
+        text-decoration: line-through;
+        color: lawngreen;
+       }
+      
+    </style>
+</head>
+<body>
+  
+        <h1 class="tit">Escriba la tarea que desea agregar</h1>
+    
+    <div class="c">
+        <div class="content-principal">
+            <div class="principal">
+                <input type="text" class="entrada">
+                <div class="botones">
+                    <button class="btn">agregar</button>
+                    <button class="borrar">borrar</button>
+                    <button class="btnCargar" style="background-color: #007bff; color: white; border-radius: 15px; border: none; cursor: pointer; padding: 0 10px;">cargar de internet</button>
+                </div>
+            </div>
+            </div>
+        <div class="mover">
+        
+                 <div class="T">
+                     <div class="tareas">
+                     <p class="contador">Tareas hechas: 0</p>
+                          </div>
+                 </div>
+        </div>
+
+        
+        <div class="modoCambio">
+        <div class="mdoOne">
+            <div>
+                <h2 class="h">Modo normal</h2>
+            </div>
+            <div class="mdoTwo"><button class="g">Cambiar modo</button></div>
+        </div>
+    </div>
+
+
+
+    </div>
+
+
+
+
+    
+
+
+
+    <div class="orden">
+        <ul class="listas"></ul>
+    </div>
+
+
+
+
+
+
+<div class="model">
+    <div class="model-content">
+        <input type="text" class="text-model">    </input>
+        <button class="btn-modal-save">Guardar</button>
+        <button class="btn-modal-salir">Salir</button>
+    </div>
+</div>
+
+    <script>
+
+        let tareaActual = null;
+        const entrada = document.querySelector(".entrada");
+        const boton = document.querySelector(".btn");
+        const listas = document.querySelector(".listas");
+        const borrar = document.querySelector(".borrar");
+        const cambiarModo = document.querySelector(".g");
+        const body =document.body;
+        const h = document.querySelector(".h");
+        const com = document.querySelector(".contador");
+        const modal = document.querySelector(".model");
+        const btnGuardar = document.querySelector(".btn-modal-save");
+        const btnSalir = document.querySelector(".btn-modal-salir");
+        const btnCargar = document.querySelector(".btnCargar");
+
+        function crearTareaEnElDom(textoDeLaTarea){
+            let miPieza = document.createElement("li");
+            let texto = document.createElement("span");
+            texto.textContent = textoDeLaTarea;
+
+            miPieza.addEventListener("click",function(){
+                    miPieza.classList.toggle("completado");
+                    actualizarContador();
+            });
+            
+            const btnEliminar = document.createElement("button");
+            btnEliminar.textContent = "❌";
+            btnEliminar.classList.add("btn-eli");
+
+            let contenedorBtn =document.createElement("div");
+            contenedorBtn.classList.add("contenedorBtn");
+
+            const btnEdit = document.createElement("button");
+            btnEdit.textContent= "✏️";
+            btnEdit.classList.add("btn-edit");
+
+            btnEliminar.addEventListener("click",function(e){
+                e.stopPropagation();
+                miPieza.remove();
+                actualizarContador();
+
+            });
+            btnEdit.addEventListener("click",function(e){
+                e.stopPropagation();
+                inputModal.value = texto.textContent;
+                tareaActual = texto;
+                modal.classList.add("active");
+            });
+            contenedorBtn.appendChild(btnEliminar);
+            contenedorBtn.appendChild(btnEdit);
+            miPieza.appendChild(texto);
+            miPieza.appendChild(contenedorBtn);
+            listas.appendChild(miPieza);
+
+            actualizarContador();
+
+        }
+
+        function actualizarContador(){
+          let  tareasHechas = document.querySelectorAll("li.completado").length;
+          com.textContent =`Tareas hechas : ${tareasHechas}`;
+
+        }
+        btnGuardar.addEventListener("click",function(){
+                    if(tareaActual && inputModal.value.trim() !== ""){
+                        tareaActual.textContent = inputModal.value;
+                        modal.classList.remove("active");
+
+                    }
+
+                 });
+
+                 btnSalir.addEventListener("click", ()=>modal.classList.remove("active"));
+            
+           
+
+
+
+
+
+
+
+        boton.addEventListener("click",function(){
+            if(entrada.value.trim() !== ""){
+                crearTareaEnElDom(entrada.value);
+                entrada.value = "";
+            }else{
+                alert("ingresa un valor");
+            }
+
+        });
+        const inputModal = document.querySelector(".text-model");
+
+
+
+        
+
+        entrada.addEventListener("keydown",function(e){
+            if(e.key === "Enter"){
+              boton.click();
+            }
+
+        });
+
+        borrar.addEventListener("click",function(){
+           
+            const ultimo = listas.lastElementChild;
+            if(ultimo){
+                ultimo.remove();
+            }else{
+                alert("no hay ningun elemento que borrar");
+            }
+        });
+
+        
+
+
+        cambiarModo.addEventListener("click",function(){
+            body.classList.toggle("oscuro");
+
+            if(body.classList.contains("oscuro")){
+                h.textContent = "Modo oscuro";
+            }else{
+                h.textContent= "Modo normal"
+            }
+
+
+
+        });
+        btnCargar.addEventListener("click",async() => {
+            try{
+                btnCargar.textContent = "cargando...";
+                const respuesta = await fetch("https://jsonplaceholder.typicode.com/todos?_limit=3");
+                if(!respuesta.ok)throw new Error("error al conectar servidor");
+                const tareasInt =await respuesta.json();
+
+                tareasInt.forEach(tarea => {
+                    crearTareaEnElDom(tarea.title);
+
+                
+
+                    
+                });
+                 btnCargar.textContent = "Cargar de internet";
+            }catch(error){
+                console.error("fallo la matrix :",error);
+                alert("No se pudieron cargar las tareas");
+        btnCargar.textContent = "Cargar de internet";
+
+            }
+
+        });
+        
+
+       
+
+    </script>
+
+
+
+</body>
+</html>
